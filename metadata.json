@@ -1,0 +1,8 @@
+{
+  "name": "Smart Warehouse Robot — AI Path Planning Simulator",
+  "description": "Interactive AI path planning simulator for warehouse robots featuring BFS, DFS, Greedy Best-First, and A* search algorithms with real-time visualization and performance comparison.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

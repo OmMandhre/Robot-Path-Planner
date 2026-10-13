@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Warehouse Robot — AI Path Planning Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="theme-light">
+    <!-- Main App Wrapper -->
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-badge">
+                    <svg class="warehouse-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 18L24 6L42 18V42H6V18Z" fill="#2563EB" opacity="0.25"/>
+                        <path d="M6 18L24 6L42 18V42H6V18Z" stroke="#3B82F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="14" y="22" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+                        <rect x="26" y="22" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+                        <rect x="20" y="32" width="8" height="8" rx="1.5" fill="#10B981" stroke="#059669" stroke-width="2"/>
+                        <path d="M12 42V18M36 42V18" stroke="#3B82F6" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">Smart Warehouse Robot</h1>
+                    <p class="brand-subtitle">AI Path Planning Simulator</p>
+                </div>
+            </div>
+
+            <!-- Clean Navigation Structure -->
+            <nav class="header-nav">
+                <button id="navSimulator" class="nav-btn active">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="nav-icon"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                    Simulator
+                </button>
+                <button id="navComparison" class="nav-btn">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="nav-icon"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+                    Algorithm Comparison
+                </button>
+                <button id="navTheory" class="nav-btn">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="nav-icon"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+                    Theory &amp; Viva Guide
+                </button>
+                <button id="navAbout" class="nav-btn">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="nav-icon"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                    About
+                </button>
+                <button id="themeToggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                    <svg id="themeIcon" viewBox="0 0 20 20" fill="currentColor" class="theme-icon"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Column 1: Map Tools & Presets -->
+            <aside class="sidebar-left">
+                <!-- Map Controls Card -->
+                <div class="card map-controls-card">
+                    <h2 class="card-heading">Map Controls</h2>
+                    <div class="tools-list">
+                        <button class="tool-btn active" data-tool="select">
+                            <span class="tool-icon icon-select">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.672 1.512a1 1 0 011.238.38l6.88 11.258a1 1 0 01-1.196 1.472l-3.327-.92-2.186 3.784a1 1 0 11-1.732-1l2.186-3.784-2.825-1.996a1 1 0 01-.038-1.614l1-1z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <span class="tool-label">Select / Move</span>
+                        </button>
+                        <button class="tool-btn" data-tool="start">
+                            <span class="tool-icon icon-start">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <span class="tool-label">Set Start (S)</span>
+                        </button>
+                        <button class="tool-btn" data-tool="goal">
+                            <span class="tool-icon icon-goal">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <span class="tool-label">Set Goal (G)</span>
+                        </button>
+                        <button class="tool-btn" data-tool="obstacle">
+                            <span class="tool-icon icon-obstacle">
+                                <span class="obstacle-block"></span>
+                            </span>
+                            <span class="tool-label">Add Obstacle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="shelf">
+                            <span class="tool-icon icon-shelf">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/><path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <span class="tool-label">Add Shelf (Item)</span>
+                        </button>
+                        <button class="tool-btn" data-tool="packing">
+                            <span class="tool-icon icon-packing">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 100-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.33-1.32A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                            </span>
+                            <span class="tool-label">Add Packing Station</span>
+                        </button>
+                        <button class="tool-btn" data-tool="charging">
+                            <span class="tool-icon icon-charging">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/></svg>
+                            </span>
+                            <span class="tool-label">Add Charging Station</span>
+                        </button>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="action-buttons-list">
+                        <button id="btnClearMap" class="action-btn">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="btn-icon"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            Clear Map
+                        </button>
+                        <button id="btnResetMap" class="action-btn">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="btn-icon"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+                            Reset Map
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Predefined Maps Card -->
+                <div class="card predefined-maps-card">
+                    <h2 class="card-heading">Predefined Maps</h2>
+                    <div class="presets-list">
+                        <button class="preset-btn" data-preset="empty">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="preset-icon"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            Empty Warehouse
+                        </button>
+                        <button class="preset-btn active" data-preset="small">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="preset-icon"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            Small Warehouse
+                        </button>
+                        <button class="preset-btn" data-preset="medium">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="preset-icon"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            Medium Warehouse
+                        </button>
+                        <button class="preset-btn" data-preset="dense">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="preset-icon"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            Dense Warehouse
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Column 2: Center Warehouse Grid -->
+            <section class="main-workspace">
+                <div class="card grid-card">
+                    <div class="grid-card-header">
+                        <h2 class="card-heading">Warehouse Map</h2>
+                        <div class="grid-size-selector">
+                            <label for="selectGridSize">Grid Size:</label>
+                            <select id="selectGridSize" class="custom-select">
+                                <option value="4x4">4 x 4</option>
+                                <option value="5x5">5 x 5</option>
+                                <option value="6x6">6 x 6</option>
+                                <option value="10x10" selected>10 x 10</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Grid Container -->
+                    <div class="grid-wrapper">
+                        <div id="warehouseGrid" class="warehouse-grid" role="grid" aria-label="Warehouse Navigation Grid">
+                            <!-- Cells dynamically rendered via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Column 3: Path Planning & Results -->
+            <aside class="sidebar-right">
+                <!-- Path Planning Controls Card -->
+                <div class="card planning-card">
+                    <h2 class="card-heading">Path Planning</h2>
+                    
+                    <div class="form-group">
+                        <label for="selectAlgorithm">Algorithm</label>
+                        <select id="selectAlgorithm" class="custom-select full-width">
+                            <option value="astar" selected>A* (A Star)</option>
+                            <option value="bfs">Breadth-First Search (BFS)</option>
+                            <option value="dfs">Depth-First Search (DFS)</option>
+                            <option value="greedy">Greedy Best-First Search</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="heuristicGroup">
+                        <label for="selectHeuristic">Heuristic (for A* / Greedy)</label>
+                        <select id="selectHeuristic" class="custom-select full-width">
+                            <option value="manhattan" selected>Manhattan Distance</option>
+                            <option value="euclidean">Euclidean Distance</option>
+                            <option value="chebyshev">Chebyshev Distance</option>
+                        </select>
+                    </div>
+
+                    <div class="options-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="chkShowSearchProcess" checked>
+                            <span>Show Search Process</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="chkAnimateSteps" checked>
+                            <span>Animate Steps</span>
+                        </label>
+                    </div>
+
+                    <div class="speed-control-row">
+                        <label for="speedSlider">Speed:</label>
+                        <input type="range" id="speedSlider" min="1" max="5" value="3" class="slider">
+                        <span id="speedValueText">Normal</span>
+                    </div>
+
+                    <div class="primary-actions">
+                        <button id="btnFindPath" class="btn-primary">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="btn-icon"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+                            Find Path
+                        </button>
+                        <button id="btnCompareAll" class="btn-success">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="btn-icon"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+                            Compare All Algorithms
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Current Result Card -->
+                <div class="card result-card">
+                    <h2 id="resultHeading" class="card-heading">Current Result (A*)</h2>
+                    
+                    <div id="statusBanner" class="status-banner banner-success">
+                        <svg class="status-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        <span id="statusMessage">Path found successfully!</span>
+                    </div>
+
+                    <div class="metrics-table">
+                        <div class="metric-row">
+                            <span class="metric-label">Path Length</span>
+                            <span id="statPathLength" class="metric-value font-mono">18</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Nodes Explored</span>
+                            <span id="statNodesExplored" class="metric-value font-mono">35</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Execution Time</span>
+                            <span id="statExecTime" class="metric-value font-mono">4 ms</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Algorithm</span>
+                            <span id="statAlgorithm" class="metric-value">A* (A Star)</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Heuristic</span>
+                            <span id="statHeuristic" class="metric-value">Manhattan Distance</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Bottom Row (3 Equal Cards) -->
+        <section class="bottom-section">
+            
+            <!-- Bottom 1: Algorithm Comparison Table -->
+            <div id="comparison-section" class="card comparison-card">
+                <h3 class="card-heading">Algorithm Comparison</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Path Length &darr;</th>
+                                <th>Nodes Explored</th>
+                                <th>Execution Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonTableBody">
+                            <tr id="rowBfs">
+                                <td>BFS</td>
+                                <td class="cost-cell">18</td>
+                                <td>82</td>
+                                <td>6 ms</td>
+                            </tr>
+                            <tr id="rowDfs">
+                                <td>DFS</td>
+                                <td class="cost-cell">26</td>
+                                <td>91</td>
+                                <td>5 ms</td>
+                            </tr>
+                            <tr id="rowGreedy">
+                                <td>Greedy Best-First</td>
+                                <td class="cost-cell">20</td>
+                                <td>43</td>
+                                <td>4 ms</td>
+                            </tr>
+                            <tr id="rowAstar" class="highlight-row">
+                                <td><strong>A* (Manhattan)</strong></td>
+                                <td class="cost-cell"><strong>18</strong></td>
+                                <td><strong>35</strong></td>
+                                <td><strong>4 ms</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom 2: Path Steps -->
+            <div class="card path-steps-card">
+                <h3 id="pathStepsHeading" class="card-heading">Path Steps (A*)</h3>
+                <div id="stepsList" class="steps-container">
+                    <div class="step-item">
+                        <span class="step-num step-start">1</span>
+                        <span class="step-desc">Start at (0, 0)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">2</span>
+                        <span class="step-desc">Move Right to (0, 1)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">3</span>
+                        <span class="step-desc">Move Right to (0, 2)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">4</span>
+                        <span class="step-desc">Move Right to (0, 3)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">5</span>
+                        <span class="step-desc">Move Down to (1, 3)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">6</span>
+                        <span class="step-desc">Move Down to (2, 3)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">7</span>
+                        <span class="step-desc">Move Right to (2, 4)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom 3: Legend (High Contrast) -->
+            <div class="card legend-card">
+                <h3 class="card-heading">Legend</h3>
+                <div class="legend-grid">
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-start">
+                            <span class="robot-mini-icon">🤖</span>
+                        </span>
+                        <span class="legend-label">Start (S) - Robot</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-path">
+                            <span style="font-weight: 900; color: #fff;">➔</span>
+                        </span>
+                        <span class="legend-label">Path (Calculated)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-goal">
+                            <span class="flag-mini-icon">🚩</span>
+                        </span>
+                        <span class="legend-label">Goal (G) - Destination</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-explored"></span>
+                        <span class="legend-label">Explored Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-obstacle">
+                            <span style="display:inline-block; width:6px; height:6px; border:1px solid #94a3b8;"></span>
+                        </span>
+                        <span class="legend-label">Obstacle (Wall)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-normal"></span>
+                        <span class="legend-label">Normal Cell</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-shelf">
+                            <span class="shelf-mini-icon">📦</span>
+                        </span>
+                        <span class="legend-label">Shelf (Item)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-packing">
+                            <span class="cart-mini-icon">🛒</span>
+                        </span>
+                        <span class="legend-label">Packing Station</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch swatch-charging">
+                            <span class="bolt-mini-icon">⚡</span>
+                        </span>
+                        <span class="legend-label">Charging Station</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. COMPLETE ABOUT MODAL -->
+        <div id="aboutModal" class="modal-backdrop" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h3 class="modal-title">About Smart Warehouse Robot</h3>
+                    <button id="btnCloseAboutModal" class="modal-close-btn">&times;</button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 18px;">
+                    <div>
+                        <h4 style="color: var(--primary-blue); font-size: 1rem; font-weight: 800; margin-bottom: 6px;">Project Overview</h4>
+                        <p style="font-size: 0.85rem; font-weight: 500; line-height: 1.6;">
+                            Smart Warehouse Robot is an educational AI path-planning simulator developed for computer engineering students. It simulates an autonomous mobile warehouse robot navigating a 2D floor grid while avoiding obstacles and storage shelves.
+                        </p>
+                    </div>
+
+                    <div style="background: var(--bg-page); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                        <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 6px;">Key Educational Objectives</h4>
+                        <ul style="font-size: 0.8rem; font-weight: 600; padding-left: 18px; line-height: 1.6;">
+                            <li>Demonstrate classical AI search algorithms (uninformed vs. informed).</li>
+                            <li>Visualize robot navigation and path wavefronts in real time.</li>
+                            <li>Empirically benchmark and compare algorithm performance.</li>
+                            <li>Understand the role and mathematical admissibility of heuristics in discrete grid search.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 8px;">Technology Stack</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+                            <div style="background: var(--bg-page); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.75rem;">
+                                <strong style="color: var(--primary-blue); display: block; margin-bottom: 4px;">Python 3</strong>
+                                AI search engines using deque and heapq.
+                            </div>
+                            <div style="background: var(--bg-page); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.75rem;">
+                                <strong style="color: var(--success-green); display: block; margin-bottom: 4px;">Flask</strong>
+                                REST API routes for pathfinding and benchmarking.
+                            </div>
+                            <div style="background: var(--bg-page); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.75rem;">
+                                <strong style="color: #d97706; display: block; margin-bottom: 4px;">HTML5</strong>
+                                Semantic page structure and accessible layout.
+                            </div>
+                            <div style="background: var(--bg-page); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.75rem;">
+                                <strong style="color: #7c3aed; display: block; margin-bottom: 4px;">CSS3</strong>
+                                High-contrast WCAG AA responsive design.
+                            </div>
+                            <div style="background: var(--bg-page); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.75rem;">
+                                <strong style="color: #0284c7; display: block; margin-bottom: 4px;">Vanilla JS</strong>
+                                Fetch API communication and grid animations.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 6px;">How to Use (8-Step Guide)</h4>
+                        <ol style="font-size: 0.8rem; font-weight: 600; padding-left: 20px; line-height: 1.6;">
+                            <li>Select a warehouse grid size (4×4, 5×5, 6×6, or 10×10).</li>
+                            <li>Choose a map preset or draw a custom floor plan.</li>
+                            <li>Set the robot start (S) and destination goal (G).</li>
+                            <li>Place obstacles (blocked walls) and shelves (items).</li>
+                            <li>Choose an AI search algorithm and distance heuristic.</li>
+                            <li>Click "Find Path" to execute the algorithm in Python.</li>
+                            <li>View explored nodes, the final route, and performance metrics.</li>
+                            <li>Click "Compare All Algorithms" to compare empirical results side-by-side.</li>
+                        </ol>
+                    </div>
+
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; padding: 12px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;">
+                        <strong>Scope & Limitations:</strong> This application is a software simulation, not a physical hardware controller. Execution times in milliseconds vary according to local computer specs and thread load.
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">College submission bundle:</span>
+                        <a href="/api/download-project" download="smart-warehouse-ai-project.zip" class="btn-primary" style="text-decoration: none; padding: 8px 16px; font-size: 0.8rem;">
+                            Download Project .ZIP
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. REDESIGNED THEORY & VIVA GUIDE MODAL -->
+        <div id="theoryModal" class="modal-backdrop" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h3 class="modal-title">AI Search Theory &amp; Viva Voce Guide</h3>
+                    <button id="btnCloseModal" class="modal-close-btn">&times;</button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    <!-- 4 Distinct Algorithm Cards -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                        <div class="theory-card" style="border-left: 5px solid #2563eb;">
+                            <h4 style="color: #2563eb;">1. Breadth-First Search (BFS)</h4>
+                            <p><strong>Concept:</strong> Explores level-by-level outward from start.</p>
+                            <p><strong>Frontier:</strong> FIFO Queue (<code>collections.deque</code>)</p>
+                            <p><strong>Optimality:</strong> Guaranteed shortest path on unweighted grid.</p>
+                            <p><strong>Complexity:</strong> Time: O(V + E), Space: O(V)</p>
+                        </div>
+
+                        <div class="theory-card" style="border-left: 5px solid #9333ea;">
+                            <h4 style="color: #9333ea;">2. Depth-First Search (DFS)</h4>
+                            <p><strong>Concept:</strong> Explores deeply along one branch before backtracking.</p>
+                            <p><strong>Frontier:</strong> LIFO Stack (Python list <code>pop()</code>)</p>
+                            <p><strong>Optimality:</strong> Not guaranteed (frequently finds non-optimal detours).</p>
+                            <p><strong>Complexity:</strong> Time: O(V + E), Space: O(V)</p>
+                        </div>
+
+                        <div class="theory-card" style="border-left: 5px solid #d97706;">
+                            <h4 style="color: #d97706;">3. Greedy Best-First Search</h4>
+                            <p><strong>Concept:</strong> Prioritizes nodes closest to destination using h(n).</p>
+                            <p><strong>Frontier:</strong> Priority Queue (<code>heapq</code> sorted by h(n))</p>
+                            <p><strong>Optimality:</strong> Not guaranteed (can be misled by obstacles).</p>
+                            <p><strong>Evaluation:</strong> f(n) = h(n)</p>
+                        </div>
+
+                        <div class="theory-card" style="border-left: 5px solid #16a34a;">
+                            <h4 style="color: #16a34a;">4. A* Search (A Star)</h4>
+                            <p><strong>Concept:</strong> Combines past cost g(n) with estimated remaining cost h(n).</p>
+                            <p><strong>Frontier:</strong> Priority Queue (<code>heapq</code> sorted by f(n))</p>
+                            <p><strong>Optimality:</strong> Guaranteed optimal with admissible heuristic.</p>
+                            <p><strong>Formula:</strong> <code>f(n) = g(n) + h(n)</code></p>
+                        </div>
+                    </div>
+
+                    <!-- Formulas Box -->
+                    <div style="background: #0f172a; color: #fff; padding: 14px; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.8rem;">
+                        <p style="color: #4ade80; font-weight: bold; margin-bottom: 4px;">f(n) = g(n) + h(n)</p>
+                        <p style="font-family: var(--font-sans); color: #cbd5e1; font-size: 0.75rem; margin-bottom: 8px;">
+                            g(n) = actual cost from start to cell n. &nbsp;|&nbsp; h(n) = estimated heuristic cost to goal.
+                        </p>
+                        <p style="color: #38bdf8; font-weight: bold; margin-bottom: 4px;">Manhattan Distance: h(n) = |r - r_goal| + |c - c_goal|</p>
+                        <p style="font-family: var(--font-sans); color: #cbd5e1; font-size: 0.75rem;">
+                            Exact minimum orthogonal moves on 4-directional grids without diagonal steps (admissible and consistent).
+                        </p>
+                    </div>
+
+                    <!-- Comparison Table -->
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 6px;">Algorithm Comparison Summary</h4>
+                        <table class="data-table" style="border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.75rem;">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Data Structure</th>
+                                    <th>Shortest Path Guaranteed?</th>
+                                    <th>Main Idea</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="color: #2563eb; font-weight: bold;">BFS</td>
+                                    <td>Queue</td>
+                                    <td style="color: var(--success-green); font-weight: bold;">Yes (unweighted grid)</td>
+                                    <td>Explore level by level</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #9333ea; font-weight: bold;">DFS</td>
+                                    <td>Stack</td>
+                                    <td style="color: var(--danger-red); font-weight: bold;">No</td>
+                                    <td>Explore deeply, then backtrack</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #d97706; font-weight: bold;">Greedy Best-First</td>
+                                    <td>Priority queue</td>
+                                    <td style="color: var(--danger-red); font-weight: bold;">No</td>
+                                    <td>Move toward the estimated goal</td>
+                                </tr>
+                                <tr style="background: rgba(22, 163, 74, 0.1);">
+                                    <td style="color: #16a34a; font-weight: 900;">A*</td>
+                                    <td>Priority queue</td>
+                                    <td style="color: var(--success-green); font-weight: 900;">Yes (under appropriate conditions)</td>
+                                    <td>Combine actual and estimated cost</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 13 Viva Questions -->
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 6px;">13 Viva Voce Questions &amp; Model Answers</h4>
+                        <div id="vivaList" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Populated dynamically via JS with click-to-expand accordion -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script loading -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
